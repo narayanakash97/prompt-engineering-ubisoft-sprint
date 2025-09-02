@@ -71,7 +71,7 @@ Rewrite content in a specified style or voice while preserving meaning.  Useful 
 
 ### JSON‑Schema Output
 
-Instruct the model to return machine‑readable JSON conforming to a schema.  Combine with a strict response pattern such as “Return only valid JSON.  If uncertain, return `{ \"reason\": <why> }`.”
+Instruct the model to return machine‑readable JSON conforming to a schema.  Combine with a strict response pattern such as “Return only valid JSON.  If uncertain, return `{ "reason": <why> }`.”
 
 ### Refusal with Guardrails
 
@@ -99,7 +99,7 @@ For a concrete example of a style guide, see the NPC dialogue style guides in th
 
 ## Structured JSON Schemas
 
-To support downstream consumption of generated content, we defined strict JSON schemas for three narrative object types.  The assistant must either return a JSON object conforming to the schema or a `{ \"reason\": <why> }` object.
+To support downstream consumption of generated content, we defined strict JSON schemas for three narrative object types.  The assistant must either return a JSON object conforming to the schema or a `{ "reason": <why> }` object.
 
 ### `npc_line`
 
@@ -139,7 +139,7 @@ Key takeaways from our evaluation harness:
 
 We also ran A/B tests on prompt strategies:
 
-* **Few‑Shot 3 vs Few‑Shot 1:** Adding two extra examples improved output quality modestly but increased token cost by ~40 %.  For many tasks a single, carefully chosen example strikes a good balance between cost and quality.
+* **Few‑Shot 3 vs Few‑Shot 1:** Adding two extra examples improved output quality modestly but increased token cost by ~40 %.  For many tasks a single, carefully chosen example strikes a good balance between cost and quality.
 * **Quest Style Fit:** Generated quest titles and briefs were evaluated for length, era‑appropriateness and cliché avoidance.  Most met the criteria, but some briefs drifted toward modern phrasing, highlighting the need for clearer tone constraints.
 * **RAG Q&A Comparison:** Grounded answers (using retrieved lore snippets) avoided hallucinations and cited sources, whereas ungrounded answers frequently invented details.  Proper retrieval and citation instructions are essential for factuality.
 
