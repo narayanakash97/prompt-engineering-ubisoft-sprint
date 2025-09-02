@@ -1,0 +1,101 @@
+{
+  "system_prompt": "You are a Q&A assistant for the fantasy world of Eldoria. You answer player questions using only the retrieved lore provided to you. When you answer, you must cite the snippets you used in square brackets (e.g., [1], [2]). If the answer is not in the provided context, reply that the information is not available and do not guess. Do not invent facts beyond the retrieved context.",
+  "questions": [
+    {
+      "id": 1,
+      "difficulty": "easy",
+      "question": "Who founded Eldorwind, and what natural feature influenced its location?",
+      "ungrounded_answer": "Eldorwind was founded by a human king who loved mountains and built it near snowy peaks.",
+      "grounded_answer": "Eldorwind was established by the elves who chose a site near waterfalls, shaping the city around the cascading streams [1].",
+      "hallucinations_avoided": ["Identifying a human king as founder", "Claiming mountains influenced location instead of waterfalls"]
+    },
+    {
+      "id": 2,
+      "difficulty": "easy",
+      "question": "What does the Sword of Dawn do when orcs are near?",
+      "ungrounded_answer": "It bursts into flames and grants the wielder incredible strength when orcs are close.",
+      "grounded_answer": "The Sword of Dawn glows bright blue whenever orcs are near [2].",
+      "hallucinations_avoided": ["Inventing properties like bursting into flames", "Adding strength‑granting effects"]
+    },
+    {
+      "id": 3,
+      "difficulty": "easy",
+      "question": "In what year did the Flood of Frostvale occur?",
+      "ungrounded_answer": "The flood happened around 150 B.F., long before the Third Age began.",
+      "grounded_answer": "The Flood of Frostvale occurred in the year 296 A.F., when melting glaciers caused a devastating avalanche [3].",
+      "hallucinations_avoided": ["Incorrect year (150 B.F.)", "Misplacing the event in another age"]
+    },
+    {
+      "id": 4,
+      "difficulty": "easy",
+      "question": "Who governs Eldorwind according to the lore?",
+      "ungrounded_answer": "A council of dwarven merchants governs Eldorwind from their underground halls.",
+      "grounded_answer": "Eldorwind is overseen by a Council of Elders seated in the city, a governing body central to its administration [1].",
+      "hallucinations_avoided": ["Claiming dwarven merchants rule", "Saying they live in underground halls"]
+    },
+    {
+      "id": 5,
+      "difficulty": "medium",
+      "question": "Why was the Sword of Dawn forged?",
+      "ungrounded_answer": "It was forged to celebrate the end of the Frostvale flood and has no combat purpose.",
+      "grounded_answer": "The dwarven master smith forged the Sword of Dawn to defeat the Night Serpent, a great evil threatening the land [2].",
+      "hallucinations_avoided": ["Wrong purpose of commemorating the flood", "Ignoring the Night Serpent"]
+    },
+    {
+      "id": 6,
+      "difficulty": "medium",
+      "question": "What caused the catastrophe that led survivors to relocate, and what was it called?",
+      "ungrounded_answer": "A mysterious plague ravaged Eldorwind, forcing the citizens to seek refuge in Frostvale.",
+      "grounded_answer": "It was the Flood of Frostvale, a catastrophic event triggered by melting glaciers that caused an avalanche; the few survivors had to abandon their homes [3].",
+      "hallucinations_avoided": ["Misidentifying the event as a plague", "Confusing location of refugees"]
+    },
+    {
+      "id": 7,
+      "difficulty": "medium",
+      "question": "Which ancient city was built near waterfalls, and by whom?",
+      "ungrounded_answer": "The city of Frostvale was carved into cliffs by dwarves near roaring waterfalls.",
+      "grounded_answer": "Eldorwind is the ancient city built near waterfalls by elves who shaped it around cascading streams [1].",
+      "hallucinations_avoided": ["Confusing Frostvale with Eldorwind", "Claiming dwarves built it"]
+    },
+    {
+      "id": 8,
+      "difficulty": "medium",
+      "question": "What race is associated with forging the Sword of Dawn?",
+      "ungrounded_answer": "It was forged by human paladins in the kingdom of Frostvale.",
+      "grounded_answer": "The Sword of Dawn was forged by a renowned dwarven master smith [2].",
+      "hallucinations_avoided": ["Attributing forging to human paladins", "Incorrect location"]
+    },
+    {
+      "id": 9,
+      "difficulty": "hard",
+      "question": "How did the Flood of Frostvale affect Eldorwind's history?",
+      "ungrounded_answer": "The flood destroyed half of Eldorwind and ushered in a period of dwarven rule.",
+      "grounded_answer": "According to the provided lore, there is no indication that the Flood of Frostvale directly affected Eldorwind's history; any connection would be speculative and thus unsupported [1][3].",
+      "hallucinations_avoided": ["Claiming Eldorwind was partially destroyed", "Asserting dwarven rule followed the flood"]
+    },
+    {
+      "id": 10,
+      "difficulty": "hard",
+      "question": "What are the properties of the Sword of Dawn besides glowing blue?",
+      "ungrounded_answer": "It grants eternal life and shoots lightning bolts at foes.",
+      "grounded_answer": "The lore only notes that it was forged to defeat the Night Serpent and that it glows bright blue near orcs; no other properties are mentioned [2].",
+      "hallucinations_avoided": ["Inventing eternal life or lightning abilities"]
+    },
+    {
+      "id": 11,
+      "difficulty": "hard",
+      "question": "When was the Sword of Dawn created in relation to the Flood of Frostvale?",
+      "ungrounded_answer": "It was forged immediately after the flood in 297 A.F. as a token of hope.",
+      "grounded_answer": "The lore does not provide a timeline linking the creation of the Sword of Dawn and the Flood of Frostvale; any specific dates would be conjecture [2][3].",
+      "hallucinations_avoided": ["Assigning a year (297 A.F.)", "Stating a relation not given in the lore"]
+    },
+    {
+      "id": 12,
+      "difficulty": "hard",
+      "question": "What is the significance of the Council of Elders in the Third Age?",
+      "ungrounded_answer": "The council led military campaigns against dragons and enacted new trade laws across the realm.",
+      "grounded_answer": "The lore mentions that Eldorwind served as the seat of the Council of Elders; beyond being the governing body, no additional roles such as military campaigns or trade laws are described [1].",
+      "hallucinations_avoided": ["Claiming the council led dragon campaigns", "Attributing trade regulation powers"]
+    }
+  ]
+}
