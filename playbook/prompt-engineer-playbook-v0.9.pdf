@@ -1,0 +1,208 @@
+# Prompt Engineer Playbook (v0.9)
+
+This playbook consolidates the core techniques, templates and best practices we’ve assembled while building prompt‑driven systems.  It includes reusable patterns, style and safety guidelines, structured output schemas, evaluation rubrics and reports, economic considerations, and retrieval‑augmented generation (RAG) design notes.  At the end you’ll find a page on how to brief a prompt engineer to get the best results.
+
+---
+
+## Table of Contents
+
+1. [Prompt Patterns](#prompt-patterns)
+2. [Style Guide](#style-guide)
+3. [Structured JSON Schemas](#structured-json-schemas)
+4. [Evaluation Rubrics & A/B Test Reports](#evaluation-rubrics--ab-test-reports)
+5. [Safety Guardrails](#safety-guardrails)
+6. [Prompt Economy](#prompt-economy)
+7. [RAG Design](#rag-design)
+8. [How to Brief Me](#how-to-brief-me)
+
+---
+
+## Prompt Patterns
+
+Prompt patterns are reusable templates that solve common tasks.  They help you scaffold instructions, examples and constraints in a way that LLMs understand.  Below is a summary of the foundational patterns and when to use them.  For full details and examples see the `patterns.md` in this repo.
+
+### Zero‑Shot Prompting
+
+Use for straightforward tasks where the model’s prior knowledge is sufficient (e.g., definitions, simple summaries).  Provide a clear instruction and any necessary constraints.
+
+**Template:**
+
+```
+You are a helpful assistant.  {Task instruction}.  {Any constraints or formatting directions}.
+```
+
+### Few‑Shot Prompting
+
+Provide a handful of input–output examples to guide the model toward the desired behaviour.  Useful for classification, style mimicry or pattern matching tasks.  Don’t overdo examples – 1–3 shots often suffice.
+
+**Template:**
+
+```
+You are a {role}.  Here are some examples:
+Input: {example_1_input}
+Output: {example_1_output}
+...
+Now, given the new input, produce the corresponding output.
+Input: {new_input}
+Output:
+```
+
+### Role Prompting
+
+Set a persona to steer tone, voice or domain knowledge (e.g., “a medieval bard who speaks in rhyming couplets”).  Combine with task instructions to keep the model on‑topic.
+
+### Hidden Chain‑of‑Thought (CoT)
+
+Ask the model to reason internally but only output the final answer.  Improves accuracy on reasoning tasks while keeping the chain of thought private.
+
+**Template:**
+
+```
+{Question or problem}.  Think about this step by step internally, but only write the final answer.
+```
+
+### Self‑Consistency
+
+Generate multiple reasoning paths and choose the most common answer.  Increases reliability on complex problems but uses more tokens.
+
+### Style Transfer
+
+Rewrite content in a specified style or voice while preserving meaning.  Useful for localization, branding or tonal adjustments.
+
+### JSON‑Schema Output
+
+Instruct the model to return machine‑readable JSON conforming to a schema.  Combine with a strict response pattern such as “Return only valid JSON.  If uncertain, return `{ \"reason\": <why> }`.”
+
+### Refusal with Guardrails
+
+Specify disallowed topics and instruct the model to refuse or defer when asked to produce unsafe content.  Combine with escalation rules (see [Safety Guardrails](#safety-guardrails)).
+
+### Critique‑Then‑Rewrite & Summarization‑Then‑Generate
+
+Ask the model to first critique or summarize a piece of text before rewriting it.  This two‑step approach encourages deeper processing and often yields better results.
+
+---
+
+## Style Guide
+
+The style guides developed for our NPC dialogue generator emphasise **tone, brevity and era‑consistency**.  While your projects may differ, the following principles are broadly applicable:
+
+* **Tone & Voice:** Match the character’s persona (e.g., a gruff blacksmith should sound blunt, whereas an apothecary may use gentler language).  Avoid modern slang or memes when writing for historical or fantasy settings.
+* **Brevity:** Keep lines concise.  For NPC dialogue we capped lines at 15 words to fit UI constraints.  Summaries were limited to ~80 words.
+* **Variety:** Avoid repeating the same opening words or structure.  Cover different intents (greetings, warnings, trading, gossip) to keep interactions fresh.
+* **Safety:** No profanity, explicit content, hate speech or real‑world politics.  When uncertain, have the assistant refuse (see [Safety Guardrails](#safety-guardrails)).
+* **IP Respect:** Do not reference trademarked characters or franchises outside your game’s universe.
+
+For a concrete example of a style guide, see the NPC dialogue style guides in the repository (`projects/npc-dialogue-v1/style-guide.md` and `npc-dialogue-v2/style-guide.md`).
+
+---
+
+## Structured JSON Schemas
+
+To support downstream consumption of generated content, we defined strict JSON schemas for three narrative object types.  The assistant must either return a JSON object conforming to the schema or a `{ \"reason\": <why> }` object.
+
+### `npc_line`
+
+| Field      | Type    | Description                                      |
+|-----------|---------|--------------------------------------------------|
+| speaker   | string  | Name or role of the NPC speaker (1–50 chars)     |
+| tone      | string  | Short description of emotional tone (1–50 chars) |
+| max_words | integer | Maximum allowed word count (1–50)                |
+| line      | string  | The spoken line (1–200 chars)                    |
+
+### `quest_title`
+
+A simple object with a single `title` string (3–100 chars) representing a concise quest name.
+
+### `quest_brief`
+
+| Field     | Description                                                |
+|-----------|------------------------------------------------------------|
+| hook      | Initial narrative element that draws the player in (10–200 chars) |
+| objective | Primary goal the player must accomplish (10–200 chars)    |
+| twist     | Unexpected development or complication (10–200 chars)     |
+| reward    | Outcome or benefit upon completion (5–100 chars)          |
+
+See `prompt-library/json-schemas.md` for the full JSON Schema definitions and usage notes.
+
+---
+
+## Evaluation Rubrics & A/B Test Reports
+
+Robust evaluation is critical for iterating on prompts.  We used a 1–5 rubric to score generated NPC lines on five dimensions: **Lore‑fit, Tone, Variety, Brevity** and **Safety**, with a comments column for qualitative feedback.  Two datasets were generated (baseline vs. improved prompts), and each line was scored.  The improved prompts achieved higher average scores across all categories, demonstrating the value of tighter constraints and varied intent coverage.
+
+Key takeaways from our evaluation harness:
+
+* **Lore & Tone:** Clear system instructions and in‑context examples significantly improve lore consistency and tone adherence.
+* **Variety:** Enforcing anti‑repetition (no repeated two‑word openings) and covering multiple intents yields more engaging dialogue.
+* **Brevity & Safety:** Explicit word limits and safety policies reduce rambling and inappropriate content.
+
+We also ran A/B tests on prompt strategies:
+
+* **Few‑Shot 3 vs Few‑Shot 1:** Adding two extra examples improved output quality modestly but increased token cost by ~40 %.  For many tasks a single, carefully chosen example strikes a good balance between cost and quality.
+* **Quest Style Fit:** Generated quest titles and briefs were evaluated for length, era‑appropriateness and cliché avoidance.  Most met the criteria, but some briefs drifted toward modern phrasing, highlighting the need for clearer tone constraints.
+* **RAG Q&A Comparison:** Grounded answers (using retrieved lore snippets) avoided hallucinations and cited sources, whereas ungrounded answers frequently invented details.  Proper retrieval and citation instructions are essential for factuality.
+
+Detailed tables and analyses can be found in `eval-reports/npc-dialogue-ab-test-01.md`, `eval-reports/fewshot-ab-compact.md`, `eval-reports/quest-style-fit-01.md` and `eval-reports/rag-comparison-01.md`.
+
+---
+
+## Safety Guardrails
+
+To prevent unsafe or out‑of‑scope content, we defined strict guardrails for our NPC dialogue generator.  The key components are:
+
+* **Disallowed topics:** No politics or current events, no explicit or adult content, no modern/anachronistic references, no hate speech or harm instructions, and no external IP.
+* **Refusal logic:** When a prompt requests disallowed content, the assistant should respond with a refusal (“I’m sorry, but I can’t provide a response to that request.”) and avoid repeating the unsafe content.
+* **Escalation fallback:** After repeated violations or in ambiguous cases, instruct the user to consult a human moderator (“This topic requires human review.”).
+* **Implementation:** Pre‑filter user input for keywords, embed the guardrails in the system prompt, and log triggered refusals for continuous improvement.
+
+See `prompt-library/safety-guardrails.md` for the full specification and `eval-reports/redteam-results.md` for results of red‑team testing, which confirm that the guardrails effectively blocked unsafe requests.
+
+---
+
+## Prompt Economy
+
+Token usage directly impacts cost and latency.  The **Prompt Economy** guide outlines how to spend tokens wisely:
+
+1. **Context length:** Use only the necessary context.  Long prompts improve quality on complex tasks but are expensive; start minimal and iterate.
+2. **Few‑shot count:** 1–3 examples often provide substantial quality gains.  Beyond that, returns diminish quickly.
+3. **Sampling parameters:** Lower temperatures (0.2–0.5) and moderate top‑p values (0.9–0.95) yield more consistent outputs.  Use temperature 0 for deterministic tasks.
+4. **Caching strategies:** Reuse system prompts and static context across calls; cache responses to frequently asked questions.  Log token counts to identify high‑cost prompts.
+5. **Iterative tuning:** Define quality metrics, establish budgets, baseline with concise prompts, then add context or examples only where the improvements justify the extra cost.
+
+For more details, refer to `playbook/prompt-economy.md`.
+
+---
+
+## RAG Design
+
+Retrieval‑augmented generation grounds the model’s answers in external knowledge.  Our **RAG Lore Bot** design incorporates the following components:
+
+* **Document collection:** In‑game lore is stored as short passages with metadata such as era, location and character.  Documents are chunked into ~200‑word segments for efficient retrieval.
+* **Metadata fields:** Each chunk stores `era` (time period), `location`, `characters` mentioned and `tags`.  This enables precise filtering.
+* **Retrieval prompt:** “Given the player’s question and the following context snippets, answer using only the information provided.  Cite the snippet IDs.”
+* **Generation prompt:** Includes the retrieved lore snippets, instructs the model to cite sources (e.g., [1], [2]) and forbids inventing details beyond the retrieved context.
+* **Grounding rule:** *Do not invent facts beyond the retrieved context.*  If the answer cannot be found, respond with a generic fallback or ask for clarification.
+
+Sample lore snippets and grounded vs. ungrounded answers are available in `projects/rag-lore-bot/with-vs-without-grounding.md`.  The grounded version faithfully cites lore passages, whereas the ungrounded version hallucinated missing details.
+
+---
+
+## How to Brief Me
+
+To get the best results from a prompt engineer, provide a clear brief with the following elements:
+
+1. **Objective & context:** Describe the task you want to accomplish and why it matters.  Include any background information or product constraints (e.g., tone, target audience, technical limitations).
+2. **Inputs needed:** Supply sample data, examples of desired outputs, existing style guides or brand guidelines, and any reference documents.  The more precise and representative the inputs, the better the engineer can craft prompts.
+3. **Constraints & guardrails:** Specify length limits, disallowed topics, required output formats (e.g., JSON schema), and safety requirements.  Note any domain‑specific vocabulary to use or avoid.
+4. **Turnaround time:** Communicate deadlines and whether rapid iterations are acceptable.  Prompt engineering is iterative; expect to refine prompts based on early results.
+5. **Acceptance criteria:** Define what success looks like (e.g., scores on evaluation rubrics, compliance with style guide, absence of hallucinations).  Provide examples of both acceptable and unacceptable outputs.
+6. **Feedback loop:** Plan for user testing or stakeholder review.  Gather qualitative feedback and evaluation scores to inform prompt refinements.
+
+A well‑structured brief shortens the iteration cycle and leads to higher‑quality outputs.  Be as specific as possible while leaving room for creative solutions.
+
+---
+
+### Version Notes
+
+This draft (v0.9) aggregates all current documentation.  Future versions will incorporate real performance metrics, additional prompt patterns (e.g., multimodal prompts) and more detailed portfolio advice.
