@@ -3,7 +3,6 @@
 This playbook consolidates the core techniques, templates and best practices we’ve assembled while building prompt‑driven systems.  It includes reusable patterns, style and safety guidelines, structured output schemas, evaluation rubrics and reports, economic considerations, and retrieval‑augmented generation (RAG) design notes.  At the end you’ll find a page on how to brief a prompt engineer to get the best results.
 
 ---
-
 ## Table of Contents
 
 1. [Prompt Patterns](#prompt-patterns)
