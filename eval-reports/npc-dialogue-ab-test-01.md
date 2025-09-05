@@ -81,8 +81,6 @@ These lines were generated using a tighter prompt with clear constraints on tone
 
 The following screenshot shows the `npc-dialogue-v1` folder in the project repository after adding the dialogue samples and style guide.  It demonstrates the organisation of evaluation assets used in this report.  The clear folder structure under `/projects` simplifies access for manual review and automated testing.
 
-【228281854944670†screenshot】
-
 ---
 
 ### Conclusion
